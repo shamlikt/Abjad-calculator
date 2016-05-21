@@ -4,7 +4,7 @@ from pyarabic.unshape import unshaping_text
 from pyarabic.araby import strip_tashkeel
 import database
 
-input_text = unicode("1,بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ",'utf-8')
+#input_text = unicode("1,بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ",'utf-8')
 def strip(input_text):
      return  strip_tashkeel(input_text)
 
@@ -29,11 +29,11 @@ def parse(key,letter):
             skip_letter.append(i)
     return sum_value,skip_letter
 
-
-db,cu = database.connect_db()
-database.insert_initial(db,cu)
-key = database.fetch_data('one',cu)
-stripped_text =  strip(input_text)
-format_string = format_text(stripped_text)
-letter = unshape(format_string)
-print parse(key,letter)
+def calculate_value(input_text,label):
+     db,cu = database.connect_db()
+     database.insert_initial(db,cu)
+     key = database.fetch_data(label,cu)
+     stripped_text =  strip(input_text)
+     format_string = format_text(stripped_text)
+     letter = unshape(format_string)
+     return parse(key,letter)
