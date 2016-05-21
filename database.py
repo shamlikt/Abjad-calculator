@@ -9,9 +9,10 @@ def connect_db():
         cu.execute('''CREATE TABLE abjid(id INTIGER PRIMARY KEY,letter TEXT,
         value INTIGER, label TEXT)''')
     except:
-        cu.execute(''' DROP TABLE abjid ''')
-        cu.execute('''CREATE TABLE abjid(id INTIGER PRIMARY KEY,letter TEXT,
-        value INTIGER, label TEXT)''')
+        # cu.execute(''' DROP TABLE abjid ''')
+        # cu.execute('''CREATE TABLE abjid(id INTIGER PRIMARY KEY,letter TEXT,
+        # value INTIGER, label TEXT)''')
+        pass
     return db,cu
     
 def insert_initial(db,cu):
@@ -62,8 +63,18 @@ def fetch_data(label,cu):
     data = cu.execute("SELECT letter,value FROM abjid WHERE label=?",(label,))
     return data
 
-def insert_data(letter,value,label,cu):
+def insert_data(letter,value,label,cu,db):
     cu.execute('''INSERT INTO abjid(letter,value,label) values(?,?,?)''',(unicode(letter,'utf-8'),value,label))
     db.commit()
+def update_data(letter_list, label):
+    db,cu = connect_db()
+    for letter,value in letter_list:
+        print letter+"  "+value+"  "+label
+        cu.execute('''UPDATE abjid SET value = ? WHERE letter = ? AND label = ?''',
+        (value, letter, label))
+    db.commit()
 
-
+#db,cu = connect_db()
+#insert_initial(db,cu)
+# for i in fetch_data('one',cu):
+#     print i
