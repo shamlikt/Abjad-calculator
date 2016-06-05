@@ -57,6 +57,12 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.plainTextEdit.setFont(font)
         self.plainTextEdit.setObjectName(_fromUtf8("plainTextEdit"))
         self.gridLayout_3.addWidget(self.plainTextEdit, 1, 0, 1, 1)
+
+        self.lineEdit = QtGui.QLineEdit(self.tab)
+        self.lineEdit.setObjectName(_fromUtf8("lineEdit"))
+        self.lineEdit.setFont(font)
+        self.gridLayout_3.addWidget(self.lineEdit, 2, 0, 1, 1)
+
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
         self.gridLayout_3.addLayout(self.horizontalLayout, 2, 0, 1, 1)
@@ -68,6 +74,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.button_group_1 = QtGui.QButtonGroup(self.horizontalLayout_2)
         self.radioButton = QtGui.QRadioButton(self.tab)
         self.radioButton.setObjectName(_fromUtf8("radioButton"))
+        self.radioButton.setChecked(True)
         self.horizontalLayout_2.addWidget(self.radioButton)
         self.button_group_1.addButton(self.radioButton)
         self.radioButton_2 = QtGui.QRadioButton(self.tab)
@@ -94,14 +101,18 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.button_group_2 = QtGui.QButtonGroup(self.horizontalLayoutWidget_3)
         self.radioButton_4 = QtGui.QRadioButton(self.horizontalLayoutWidget_3)
         self.radioButton_4.setObjectName(_fromUtf8("radioButton_4"))
+        self.radioButton_4.setChecked(True)
+        self.radioButton_4.toggled.connect(self.updater)
         self.button_group_2.addButton(self.radioButton_4)
         self.horizontalLayout_3.addWidget(self.radioButton_4)
         self.radioButton_5 = QtGui.QRadioButton(self.horizontalLayoutWidget_3)
         self.radioButton_5.setObjectName(_fromUtf8("radioButton_5"))
+        self.radioButton_5.toggled.connect(self.updater)
         self.button_group_2.addButton(self.radioButton_5)
         self.horizontalLayout_3.addWidget(self.radioButton_5)
         self.radioButton_6 = QtGui.QRadioButton(self.horizontalLayoutWidget_3)
         self.radioButton_6.setObjectName(_fromUtf8("radioButton_6"))
+        self.radioButton_6.toggled.connect(self.updater)
         self.button_group_2.addButton(self.radioButton_6)
         self.horizontalLayout_3.addWidget(self.radioButton_6)
         self.formLayoutWidget = QtGui.QWidget(self.tab_2)
@@ -163,6 +174,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(1)
+        
         self.list_alpha('one')
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         
@@ -193,17 +205,14 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
 
     def list_alpha(self,label):
+        global obj_list
         db,cu = database.connect_db()
-        try:
-            for i in range(self.verticalLayoutScroll.count()): self.verticalLayoutScroll.itemAt(i).widget().close()
-        except:
-            pass
         
         self.letter_list = database.fetch_data(label,cu)
         font = QtGui.QFont()
         font.setPointSize(20)
 
-        
+        obj_list = []
         for letter,value in self.letter_list:
             valEdit = letter+"_Edit"
             value = str(value)
@@ -219,29 +228,32 @@ class Ui_MainWindow(QtGui.QMainWindow):
             self.formLayout.setWidget(0, QtGui.QFormLayout.FieldRole, self.valEdit)
             self.verticalLayoutScroll.addWidget(self.letter)
             self.verticalLayoutScroll.addWidget(self.valEdit)
-
+            objs = self.letter,self.valEdit
+            obj_list.append(objs)
         self.scrollArea.setWidgetResizable(True)
         self.show()
         return 
 
     def save_value(self):
         label = self.label_id(self.button_group_2.checkedId())
-        updated_list = []
-        print list(self.letter_list)
-        for letter,value in self.letter_list:
-            print letter,value
-            i = letter,self.valEdit.text()
-            update_list.append(i)
-        database.update_data(updated_list,label)
-
+        if label :
+            updated_list = []
+            for letter_obj,value_obj in obj_list:
+                letter = letter_obj.text().toUtf8()
+                value = value_obj.text()
+                objs = letter,value
+                updated_list.append(objs)
+            database.update_data(updated_list,label)
+        
             
     def calculate_value(self):
+        label = self.label_id(self.button_group_1.checkedId())
         self.value = unicode(self.plainTextEdit.toPlainText(),'utf-8')
-        answer,excluded = parser.calculate_value(unicode(self.plainTextEdit.toPlainText()),'one')
+        answer,excluded = parser.calculate_value(unicode(self.plainTextEdit.toPlainText()),label)
         self.Answer_label.setText(_translate("MainWindow", str(answer), None))
-        print(self.button_group_1.checkedId())
-        print excluded
-
+        excluded = ', '.join(set(excluded))
+        self.lineEdit.setText(_translate("MainWindow", excluded, None))       
+        
     def update_list(self):
         db,cu = database.connect_db()
         input_letter = self.letterLineEdit.text()
@@ -252,7 +264,12 @@ class Ui_MainWindow(QtGui.QMainWindow):
             database.insert_data(input_letter,input_value,label,cu,db)
             self.letterLineEdit.clear()
             self.valueLineEdit.clear()
-            self.list_alpha('one')
+            try:
+                for i in range(self.verticalLayoutScroll.count()): self.verticalLayoutScroll.itemAt(i).widget().close()
+            except:
+                pass
+
+            self.list_alpha(label)
         except :
             QtGui.QMessageBox.warning(self, "Cannot store value",
                 "Please check values",
@@ -275,7 +292,14 @@ class Ui_MainWindow(QtGui.QMainWindow):
             label = False
         return label
 
-
+    def updater(self):
+        label = self.label_id(self.button_group_2.checkedId())
+        try:
+            for i in range(self.verticalLayoutScroll.count()): self.verticalLayoutScroll.itemAt(i).widget().close()
+        except:
+            pass
+        self.list_alpha(label)
+    
 if __name__ == "__main__":
     import sys
     app = QtGui.QApplication(sys.argv)

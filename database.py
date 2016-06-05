@@ -66,15 +66,13 @@ def fetch_data(label,cu):
 def insert_data(letter,value,label,cu,db):
     cu.execute('''INSERT INTO abjid(letter,value,label) values(?,?,?)''',(unicode(letter,'utf-8'),value,label))
     db.commit()
+
 def update_data(letter_list, label):
     db,cu = connect_db()
     for letter,value in letter_list:
-        print letter+"  "+value+"  "+label
+        letter = unicode(letter,'utf-8')
         cu.execute('''UPDATE abjid SET value = ? WHERE letter = ? AND label = ?''',
-        (value, letter, label))
+        (int(value), letter, label))
     db.commit()
 
-#db,cu = connect_db()
-#insert_initial(db,cu)
-# for i in fetch_data('one',cu):
-#     print i
+

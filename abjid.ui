@@ -20,9 +20,12 @@
       <item row="0" column="1">
        <widget class="QTabWidget" name="tabWidget">
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tab">
+         <property name="focusPolicy">
+          <enum>Qt::TabFocus</enum>
+         </property>
          <attribute name="title">
           <string>Calculator</string>
          </attribute>
@@ -58,13 +61,13 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
+          <item row="3" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout"/>
           </item>
-          <item row="3" column="0">
+          <item row="4" column="0">
            <layout class="QVBoxLayout" name="verticalLayout_2"/>
           </item>
-          <item row="4" column="0">
+          <item row="5" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
              <widget class="QRadioButton" name="radioButton">
@@ -95,6 +98,9 @@
              </widget>
             </item>
            </layout>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLineEdit" name="lineEdit"/>
           </item>
          </layout>
         </widget>
