@@ -148,6 +148,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.tabWidget.addTab(self.tab_2, _fromUtf8(""))
         self.gridLayout.addWidget(self.tabWidget, 0, 1, 1, 1)
         self.gridLayout_2.addLayout(self.gridLayout, 0, 0, 1, 1)
+        self.tabWidget.setCurrentIndex(self.tab) 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 629, 25))
@@ -156,6 +157,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.statusbar = QtGui.QStatusBar(MainWindow)
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
         MainWindow.setStatusBar(self.statusbar)
+
 
 
         self.formLayoutWidget_2 = QtGui.QWidget(self.tab_2)
@@ -258,7 +260,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         db,cu = database.connect_db()
         input_letter = self.letterLineEdit.text()
         input_value =  self.valueLineEdit.text()
-        label = self.label_id(self.button_group_2.checkedId())
+        label = 'one'
         try:
             input_value = int(input_value)
             database.insert_data(input_letter,input_value,label,cu,db)
@@ -294,11 +296,11 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
     def updater(self):
         label = self.label_id(self.button_group_2.checkedId())
-        try:
-            for i in range(self.verticalLayoutScroll.count()): self.verticalLayoutScroll.itemAt(i).widget().close()
-        except:
-            pass
-        self.list_alpha(label)
+        # try:
+        #     for i in range(self.verticalLayoutScroll.count()): self.verticalLayoutScroll.itemAt(i).widget().close()
+        # except:
+        #     pass
+        # self.list_alpha(label)
     
 if __name__ == "__main__":
     import sys
