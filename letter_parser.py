@@ -31,7 +31,6 @@ def parse(key,letter):
 
 def calculate_value(input_text,label):
      db,cu = database.connect_db()
-     database.insert_initial(db,cu)
      key = database.fetch_data(label,cu)
      stripped_text =  strip(input_text)
      format_string = format_text(stripped_text)

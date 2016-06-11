@@ -8,6 +8,7 @@ def connect_db():
     try:
         cu.execute('''CREATE TABLE abjid(id INTIGER PRIMARY KEY,letter TEXT,
         value INTIGER, label TEXT)''')
+        insert_initial(db, cu)
     except:
         # cu.execute(''' DROP TABLE abjid ''')
         # cu.execute('''CREATE TABLE abjid(id INTIGER PRIMARY KEY,letter TEXT,

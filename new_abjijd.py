@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import parser 
+import letter_parser
 import database
 from PyQt4 import QtCore, QtGui
 
@@ -91,6 +91,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.horizontalLayout_2.addWidget(self.Generate_btn)
         self.gridLayout_3.addLayout(self.horizontalLayout_2, 4, 0, 1, 1)
         self.tabWidget.addTab(self.tab, _fromUtf8(""))
+        self.tabWidget.setCurrentIndex(1)
         self.tab_2 = QtGui.QWidget()
         self.tab_2.setObjectName(_fromUtf8("tab_2"))
         self.horizontalLayoutWidget_3 = QtGui.QWidget(self.tab_2)
@@ -148,7 +149,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.tabWidget.addTab(self.tab_2, _fromUtf8(""))
         self.gridLayout.addWidget(self.tabWidget, 0, 1, 1, 1)
         self.gridLayout_2.addLayout(self.gridLayout, 0, 0, 1, 1)
-        self.tabWidget.setCurrentIndex(self.tab) 
+        #self.tabWidget.setCurrentIndex(self.tab)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 629, 25))
@@ -175,8 +176,8 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.verticalLayoutScroll = QtGui.QFormLayout(self.scrollAreaWidgetContents)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(1)
-        
+
+
         self.list_alpha('one')
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         
@@ -251,7 +252,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
     def calculate_value(self):
         label = self.label_id(self.button_group_1.checkedId())
         self.value = unicode(self.plainTextEdit.toPlainText(),'utf-8')
-        answer,excluded = parser.calculate_value(unicode(self.plainTextEdit.toPlainText()),label)
+        answer,excluded = letter_parser.calculate_value(unicode(self.plainTextEdit.toPlainText()),label)
         self.Answer_label.setText(_translate("MainWindow", str(answer), None))
         excluded = ', '.join(set(excluded))
         self.lineEdit.setText(_translate("MainWindow", excluded, None))       
