@@ -190,7 +190,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         MainWindow.setTabOrder(self.radioButton_5, self.radioButton_6)
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(_translate("MainWindow", "Abjid", None))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Abjad", None))
         self.Answer_label.setText(_translate("MainWindow", "Value ", None))
         self.radioButton.setText(_translate("MainWindow", "Preset1 ", None))
         self.radioButton_2.setText(_translate("MainWindow", "Preset 2", None))
