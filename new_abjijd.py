@@ -259,7 +259,8 @@ class Ui_MainWindow(QtGui.QMainWindow):
         
     def update_list(self):
         db,cu = database.connect_db()
-        input_letter = self.letterLineEdit.text()
+        input_letter = self.letterLineEdit.text().toUtf8()
+        input_letter = str(input_letter).strip()
         input_value =  self.valueLineEdit.text()
         label = 'one'
         try:
@@ -271,7 +272,6 @@ class Ui_MainWindow(QtGui.QMainWindow):
                 for i in range(self.verticalLayoutScroll.count()): self.verticalLayoutScroll.itemAt(i).widget().close()
             except:
                 pass
-
             self.list_alpha(label)
         except :
             QtGui.QMessageBox.warning(self, "Cannot store value",
