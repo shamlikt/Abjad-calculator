@@ -54,7 +54,9 @@ def insert_initial(db,cu):
         'أ',1),(
         'إ',1),(
         'آ',1),(
-        'ؤ',1)])
+        'ؤ',1),(
+        'ئ',1)
+    ])
 
     for i in letter:
         cu.execute('''INSERT INTO abjid(letter,value,label) values(?,?,?)''',(unicode(i,'utf-8'),letter[i],'one'))
