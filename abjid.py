@@ -286,7 +286,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         answer,excluded = letter_parser.calculate_value(unicode(self.plainTextEdit.toPlainText()),label)
         self.Answer_label.setText(_translate("MainWindow", str(answer), None))
         with open('excluded.txt', 'w') as f:
-            f.writelines(excluded)
+            f.write('\n'.join(set(excluded)))
         excluded = ', '.join(set(excluded))
         self.lineEdit.setText(_translate("MainWindow", excluded, None))       
         
