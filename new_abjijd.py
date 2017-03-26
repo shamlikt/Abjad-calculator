@@ -41,8 +41,8 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.Answer_label = QtGui.QLabel(self.tab)
         font = QtGui.QFont()
         font.setPointSize(24)
-        font.setBold(True)
-        font.setItalic(True)
+        font.setBold(False)
+        font.setItalic(False)
         font.setWeight(75)
         self.Answer_label.setFont(font)
         self.Answer_label.setObjectName(_fromUtf8("Answer_label"))
@@ -50,9 +50,9 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.gridLayout_3.addLayout(self.verticalLayout, 0, 0, 1, 1)
         self.plainTextEdit = QtGui.QPlainTextEdit(self.tab)
         font = QtGui.QFont()
-        font.setPointSize(12)
-        font.setBold(True)
-        font.setItalic(True)
+        font.setPointSize(22)
+        font.setBold(False)
+        font.setItalic(False)
         font.setWeight(75)
         self.plainTextEdit.setFont(font)
         self.plainTextEdit.setObjectName(_fromUtf8("plainTextEdit"))
@@ -142,10 +142,18 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.pushButton_2.setObjectName(_fromUtf8("pushButton_2"))
         self.pushButton_2.clicked.connect(self.update_list)
         self.verticalLayout_3.addWidget(self.pushButton_2)
+
+        self.pushButton_3 = QtGui.QPushButton(self.verticalLayoutWidget)
+        self.pushButton_3.setObjectName(_fromUtf8("pushButton3"))
+        self.pushButton_3.clicked.connect(self.delete_value)
+        self.verticalLayout_3.addWidget(self.pushButton_3)
+
         self.pushButton = QtGui.QPushButton(self.verticalLayoutWidget)
         self.pushButton.setObjectName(_fromUtf8("pushButton"))
         self.pushButton.clicked.connect(self.save_value)
         self.verticalLayout_3.addWidget(self.pushButton)
+
+
         self.tabWidget.addTab(self.tab_2, _fromUtf8(""))
         self.gridLayout.addWidget(self.tabWidget, 0, 1, 1, 1)
         self.gridLayout_2.addLayout(self.gridLayout, 0, 0, 1, 1)
@@ -190,7 +198,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         MainWindow.setTabOrder(self.radioButton_5, self.radioButton_6)
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(_translate("MainWindow", "Abjad", None))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Tally", None))
         self.Answer_label.setText(_translate("MainWindow", "Value ", None))
         self.radioButton.setText(_translate("MainWindow", "Preset1 ", None))
         self.radioButton_2.setText(_translate("MainWindow", "Preset 2", None))
@@ -204,6 +212,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.valueLabel.setText(_translate("MainWindow", "value", None))
         self.pushButton_2.setText(_translate("MainWindow", "Add Value ", None))
         self.pushButton.setText(_translate("MainWindow", "Save", None))
+        self.pushButton_3.setText(_translate("MainWindow", "Delete", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "Settings", None))
 
 
@@ -213,7 +222,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         
         self.letter_list = database.fetch_data(label,cu)
         font = QtGui.QFont()
-        font.setPointSize(20)
+        font.setPointSize(22)
 
         obj_list = []
         for letter,value in self.letter_list:
@@ -237,6 +246,28 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.show()
         return 
 
+    def delete_value(self):
+        db,cu = database.connect_db()
+        input_letter = self.letterLineEdit.text().toUtf8()
+        input_letter = str(input_letter).strip()
+        label = 'one'
+        try:
+            database.delete_data(input_letter,label,cu,db)
+            self.letterLineEdit.clear()
+            self.valueLineEdit.clear()
+            try:
+                for i in range(self.verticalLayoutScroll.count()): self.verticalLayoutScroll.itemAt(i).widget().close()
+            except:
+                pass
+            self.list_alpha(label)
+        except database.DataErorr as e :
+            QtGui.QMessageBox.warning(self, "Cannot store value",
+                                      e.message,
+                                      QtGui.QMessageBox.Cancel, QtGui.QMessageBox.NoButton,
+                                      QtGui.QMessageBox.NoButton)
+            return 
+
+        
     def save_value(self):
         label = self.label_id(self.button_group_2.checkedId())
         if label :
@@ -254,6 +285,8 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.value = unicode(self.plainTextEdit.toPlainText(),'utf-8')
         answer,excluded = letter_parser.calculate_value(unicode(self.plainTextEdit.toPlainText()),label)
         self.Answer_label.setText(_translate("MainWindow", str(answer), None))
+        with open('excluded.txt', 'w') as f:
+            f.writelines(excluded)
         excluded = ', '.join(set(excluded))
         self.lineEdit.setText(_translate("MainWindow", excluded, None))       
         
@@ -273,11 +306,18 @@ class Ui_MainWindow(QtGui.QMainWindow):
             except:
                 pass
             self.list_alpha(label)
-        except :
+        except database.DataErorr as e :
             QtGui.QMessageBox.warning(self, "Cannot store value",
-                "Please check values",
-                QtGui.QMessageBox.Cancel, QtGui.QMessageBox.NoButton,
-                QtGui.QMessageBox.NoButton)
+                                      e.message,
+                                      QtGui.QMessageBox.Cancel, QtGui.QMessageBox.NoButton,
+                                      QtGui.QMessageBox.NoButton)
+            return 
+
+        except Exception as foo :
+            QtGui.QMessageBox.warning(self, "Cannot store value",
+                                      "Please check values",
+                                      QtGui.QMessageBox.Cancel, QtGui.QMessageBox.NoButton,
+                                      QtGui.QMessageBox.NoButton)
             return 
         
     def label_id(self,labelid):
